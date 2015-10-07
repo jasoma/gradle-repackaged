@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
+group 'com.github.jasoma'
+version '2.7'
+
+dependencies {
+    compile fileTree(dir: 'build/gradle-dist', include: '**/lib/*.jar')
+}
+
+shadowJar {
+    baseName = 'gradle-all'
+    classifier = ''
+}
+
+task createWrapper(type: Wrapper) {
+    gradleVersion = "$version"
+    distributionBase = 'PROJECT'
+    distributionPath = 'build/gradle-dist'
+    archiveBase = 'PROJECT'
+    archivePath = 'build/gradle-dist'
+    jarFile = 'build/wrapper-dist/gradle-wrapper.jar'
+    scriptFile = 'build/wrapper-dist/gradlew'
+}
+
+task downloadDist(type: Exec, dependsOn: createWrapper) {
+    commandLine 'build/wrapper-dist/gradlew'
+}
+
+task cleanDummyJar(type: Delete, dependsOn: shadowJar) {
+    delete jar.archivePath
+}
+
+shadowJar.dependsOn('downloadDist')
+build.dependsOn('cleanDummyJar')
