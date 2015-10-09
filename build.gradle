@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven'
     id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
@@ -11,7 +12,7 @@ dependencies {
 }
 
 shadowJar {
-    baseName = 'gradle-all'
+    baseName = 'gradle-repackaged'
     classifier = ''
 }
 
@@ -29,9 +30,5 @@ task downloadDist(type: Exec, dependsOn: createWrapper) {
     commandLine 'build/wrapper-dist/gradlew'
 }
 
-task cleanDummyJar(type: Delete, dependsOn: shadowJar) {
-    delete jar.archivePath
-}
-
 shadowJar.dependsOn('downloadDist')
-build.dependsOn('cleanDummyJar')
+build.dependsOn('shadowJar')
