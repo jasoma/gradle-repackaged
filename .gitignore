@@ -1,2 +1,8 @@
+.idea
+*.iml
+*.jar
+
+target
+
 build
 .gradle

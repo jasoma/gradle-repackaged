@@ -1,0 +1,14 @@
+group 'com.github.jasoma'
+version '1.0'
+
+buildscript {
+    dependencies {
+        classpath files('../gradle-plugin/target/gradle-plugin-example-1.0.jar')
+    }
+}
+
+apply plugin: 'example.hello'
+
+task clean(type: Delete) {
+    delete 'build'
+}

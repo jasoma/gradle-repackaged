@@ -32,3 +32,24 @@ task downloadDist(type: Exec, dependsOn: createWrapper) {
 
 shadowJar.dependsOn('downloadDist')
 build.dependsOn('shadowJar')
+install.dependsOn('shadowJar')
+
+task buildMavenProject(type: Exec, dependsOn: 'install') {
+    workingDir 'examples/gradle-plugin'
+    executable 'mvn'
+    args 'clean', 'package'
+}
+
+task runGradlePlugin(type: GradleBuild, dependsOn: 'buildMavenProject') {
+    dir = 'examples/gradle-plugin-consumer'
+    tasks = ['clean', 'hello']
+}
+
+task checkPluginOutput(dependsOn: 'runGradlePlugin') {
+    def helloTxt = file('examples/gradle-plugin-consumer/build/hello-world.txt')
+    if (!helloTxt.exists()) {
+        throw new GradleException("Tests failed: Plugin did not create the expected test file")
+    }
+}
+
+test.dependsOn('checkPluginOutput')
